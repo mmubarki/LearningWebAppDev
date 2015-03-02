@@ -48,15 +48,33 @@ var main = function () {
                 $content = $("<div>").append($input).append($button);
                /* Alternatively append() allows multiple arguments so the above
                 can be done with $content = $("<div>").append($input, $button); */
+            }else if ($element.parent().is(":nth-child(4)")) {
+                //Demonstration tab
+                // add screenshots 
+                $content = $("<div>").append(addLink('screenshots/newest.png', 'newest page')).
+                    append(addLink('screenshots/oldest.png', 'oldest page')).
+                    append(addLink('screenshots/add.png', 'add page')).
+                    append(addLink('screenshots/newest_add.png', 'newest add page'));
+    
             }
 
             $("main .content").append($content);
+            // after append tap to main .content, it have to call colorbox inside function onclicked for tab. 
+            $('a.screenshots').colorbox({rel:'screenshots', slideshow:true});
+
 
             return false;
         });
     });
-
+    function addLink(imageURL, title){
+        return $("<p>").append($("<a>").addClass("screenshots").attr("href",imageURL).text(title).attr("title",title));
+    }
     $(".tabs a:first-child span").trigger("click");
+
 };
+
+// This call for step 8: Create a web page using 
+//the Colorbox plugin to show your four screenshots as a slideshow.
+$('a.screenshots').colorbox({rel:'screenshots', slideshow:true});
 
 $(document).ready(main);
