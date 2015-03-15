@@ -1,0 +1,16 @@
+body {
+  background: white;
+  color:black;
+}
+span{
+	font-weight: bolder;
+}
+.win{
+  color: blue;
+}
+.loss{
+	color: red;
+}
+.tie{
+	color: green;
+}

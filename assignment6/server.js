@@ -1,4 +1,7 @@
-var http=require("http");
+var express = require("express"),
+    http = require("http"),
+    app = express();
+
 var gameResult = {
         outcome: "Start",
         wins: 0,
@@ -90,82 +93,43 @@ function checkResult(playerChoice){
     }
 }
 function generateHtml(req, res){
-	  res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-	  res.write('<html><head><title>play Rock, Paper, Scissors, Lizard, Spock</title></head>\n');
-    res.write('<body >\n');
-	  res.write('<h1>Welcome to game</h1>\n');
-	  res.write('<h2>play Rock, Paper, Scissors, Lizard, Spock</h2>\n');
-	  res.write('<form id="gameForm" name="gameForm" method="post" action="/" >\n' );
-    res.write('try: <select id="choice" name="choice">');
-	  res.write('<option id="0">select</option>\n');
-	  res.write('<option id="rock">rock</option>\n');
-	  res.write('<option id="paper"/>paper</option>\n');
-	  res.write('<option id="scissors"/>scissors</option>\n');
-	  res.write('<option id="lizard"/>lizard</option>\n');
-	  res.write('<option id="spock"/>spock</option>\n');
-	  res.write('<select/>\n');
-	  res.write('</form>');
-	  res.write('<div id="result" name="result">\n');
-	  res.write('</div>\n');
-	  res.write('<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>\n');
-	  res.write('<script>\n');
-	  res.write('$(document).ready(function(){\n"use strict";\n');
-    res.write('$("#choice").on("change",function(event){\n');
-    res.write('if($("#choice option:selected").text()!="0"){\n');
-    res.write('$("#gameForm").attr("action","/play/"+$("#choice option:selected").text());\n');
-    res.write('$("#gameForm").submit();}});\n');
-    res.write('setInterval(\n');
-    res.write('function fetchGameResult(){\n');
-    //json call
-    res.write('$.getJSON("/gameResult", function (data) {\n ');
-    res.write('$("#result").empty();\n');
-    res.write('$("#result").append("<p>"+data.outcome+"</p>");\n');
-    res.write('$("#result").append("<p>WINS:"+data.wins+"  LOSSES:"+data.losses+"  TIES:"+data.ties+"</p>");\n');
-    res.write('});\n'); //json call end
-    //close get function fetchGameResult
-    res.write('}\n');
-    res.write(',200);\n');
-	  //close main function
-    res.write('});\n');
-    res.write('</script>\n');
-	  res.end('</body></html>');
+    //app.use(express.static(__dirname + "/client"));
+    app.use('/client',  express.static(__dirname + '/client'));
+	  res.sendFile('client/index.html', {root: __dirname });
 	  return res;
 }
-http.createServer(function (req, res) {
-  // set up routes
-  switch(req.url) {
-    case 'gameResult':
-    case '/gameResult':
-      res.end(JSON.stringify(gameResult));
-  	break;
-  	case '/':
-  	   res=generateHtml(req,res); 
-  	break;
-    case '/play/rock':
-        checkResult('rock');
-        res=generateHtml(req,res);
-      break;
-    case '/play/paper':
-        checkResult('paper');
-        res=generateHtml(req,res);
-      break;
-    case '/play/scissors':
-        checkResult('scissors');
-        res=generateHtml(req,res);
 
-      break;
-    case '/play/lizard':
-        checkResult('lizard');
-        res=generateHtml(req,res);
-      break;
-    case '/play/spock':
-        checkResult('spock');
-        res=generateHtml(req,res);
-      break;
-    default:
-      res.writeHead(404, "Not found", {'Content-Type': 'text/html'});
-      res.end('<html><head><title>404 - Not found</title></head><body><h1>Not found.</h1></body></html>');
-  };
-  
-}).listen(3000);
+
+// create HTTP server/
+http.createServer(app).listen(3000);
+
+// set up our routes
+app.get("/", function (req, res) {
+    res=generateHtml(req,res);
+});
+app.post("/gameResult", function (req, res) {
+  res.send(JSON.stringify(gameResult));
+});
+
+app.post("/play/rock", function (req, res) {
+    checkResult('rock');
+    res=generateHtml(req,res);
+});
+app.post("/play/paper", function (req, res) {
+    checkResult('paper');
+    res=generateHtml(req,res);
+});
+app.post("/play/scissors", function (req, res) {
+    checkResult('scissors');
+    res=generateHtml(req,res);
+});
+app.post("/play/lizard", function (req, res) {
+    checkResult('lizard');
+    res=generateHtml(req,res);
+});
+app.post("/play/spock", function (req, res) {
+    checkResult('spock');
+    res=generateHtml(req,res);
+});
+
 console.log("server listening on port 3000");
